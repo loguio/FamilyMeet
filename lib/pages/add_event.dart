@@ -1,9 +1,11 @@
-// ignore_for_file: avoid_types_as_parameter_names, non_constant_identifier_names
-
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
+// import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 import "package:flutter/cupertino.dart";
+import 'package:sqflite/sqflite.dart';
+import 'dart:async';
+import 'package:path/path.dart';
+import "../dbhelper.dart";
 
 class AddEvent extends StatefulWidget {
   const AddEvent({Key? key}) : super(key: key);
@@ -13,32 +15,44 @@ class AddEvent extends StatefulWidget {
 }
 
 class _AddEvent extends State<AddEvent> {
-  final database = FirebaseDatabase.instance;
+  // final database = FirebaseDatabase.instance;
+  final dbHelper = DatabaseHelper.instance;
 
   DateTime dateTime = DateTime(2022, 12, 1, 10, 20);
   final TextEditingController description = TextEditingController();
   String? errorMessage = '';
   final TextEditingController name = TextEditingController();
-  DatabaseReference ref = FirebaseDatabase.instance.ref();
+  // DatabaseReference ref = FirebaseDatabase.instance.ref();
+  Future<void> connectDB() async {
+    await dbHelper.insert();
+    final allRows = await dbHelper.queryAllRows();
+    print(allRows);
+  }
+
+  // Future<void> insertDog(Dog dog, database) async {
+  //   // Get a reference to the database.
+  //   final db = await database;
+
+  //   // Insert the Dog into the correct table. You might also specify the
+  //   // `conflictAlgorithm` to use in case the same dog is inserted twice.
+  //   //
+  //   // In this case, replace any previous data.
+  //   await db.insert(
+  //     'dogs',
+  //     dog.toMap(),
+  //     conflictAlgorithm: ConflictAlgorithm.replace,
+  //   );
+  // }
 
   Widget _submitButton() {
     return ElevatedButton(
-      onPressed: () => {
-        ref
-            .child(("NameEvent"))
-            .push()
-            .child("nameEvent")
-            .set(name.text)
-            .asStream(),
-        name.clear(),
-      },
+      onPressed: () => {connectDB()},
       child: const Text("créer un évènement"),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final ref = database.ref();
     return Scaffold(
         appBar: AppBar(
             elevation: 0,
@@ -112,5 +126,34 @@ class _AddEvent extends State<AddEvent> {
             ],
           ),
         ));
+  }
+}
+
+class Dog {
+  final int id;
+  final String name;
+  final int age;
+
+  const Dog({
+    required this.id,
+    required this.name,
+    required this.age,
+  });
+
+  // Convert a Dog into a Map. The keys must correspond to the names of the
+  // columns in the database.
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'age': age,
+    };
+  }
+
+  // Implement toString to make it easier to see information about
+  // each dog when using the print statement.
+  @override
+  String toString() {
+    return 'Dog{id: $id, name: $name, age: $age}';
   }
 }
