@@ -26,7 +26,8 @@ class _AddEvent extends State<AddEvent> {
   Future<void> connectDB() async {
     await dbHelper.insert();
     final allRows = await dbHelper.queryAllRows();
-    print(allRows);
+    // print(allRows);
+    // print(join(await getDatabasesPath(), "cardb.db"));
   }
 
   // Future<void> insertDog(Dog dog, database) async {

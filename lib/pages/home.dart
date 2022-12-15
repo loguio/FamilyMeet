@@ -1,8 +1,11 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:test_appli1/auth.dart';
 import 'package:flutter/material.dart';
 import './connexion_page.dart';
 import 'add_event.dart';
+import "../dbhelper.dart";
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -15,7 +18,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String text = "il n'y a rien";
   final User? user = Auth().currentUser;
-
+  final dbHelper = DatabaseHelper.instance;
   Future<void> signOut() async {
     await Auth().signOut();
   }
@@ -96,6 +99,16 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  List<Map<String, dynamic>> allRows = [];
+
+  void _queryAll() async {
+    allRows = await dbHelper.queryAllRows();
+    // cars.clear();
+    // allRows.forEach((row) => cars.add(Car.fromMap(row)));
+    // _showMessageInScaffold('Query done.');
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,9 +122,32 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[],
+        child: Container(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemCount: allRows.length + 1,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == allRows.length) {
+                return ElevatedButton(
+                  child: const Text('Refresh'),
+                  onPressed: () {
+                    setState(() {
+                      _queryAll();
+                    });
+                  },
+                );
+              }
+              return Container(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    '[${allRows[index]["id"]}] ${allRows[index]["name"]} - ${allRows[index]["miles"]} miles',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
