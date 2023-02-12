@@ -141,8 +141,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 40,
                 child: Center(
                   child: Text(
-                    '[${allRows[index]["id"]}] ${allRows[index]["name"]} - ${allRows[index]["miles"]} miles',
-                    style: TextStyle(fontSize: 18),
+                    '[${allRows[index]["id"]}] ${allRows[index]["name"]} - ${allRows[index]["date"].substring(0, 10)} - ${allRows[index]["description"]}',
+                    style: TextStyle(fontSize: 20),
                   ),
                 ),
               );

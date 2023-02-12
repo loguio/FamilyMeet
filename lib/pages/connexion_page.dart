@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import "package:test_appli1/auth.dart";
 import 'package:firebase_auth/firebase_auth.dart';
 
-/// // ...
-/// await Firebase.initializeApp(
-///   options: DefaultFirebaseOptions.currentPlatform,
-/// );
-///
-///
 class ConnexionPage extends StatefulWidget {
   const ConnexionPage({Key? key}) : super(key: key);
 
@@ -20,8 +13,6 @@ class _ConnexionPage extends State<ConnexionPage> {
   // const ConnexionPage({super.key});
   final TextEditingController email = TextEditingController();
   final TextEditingController mdp = TextEditingController();
-  FirebaseDatabase database = FirebaseDatabase.instance;
-  DatabaseReference ref = FirebaseDatabase.instance.ref();
   bool isLogin = true;
   String? errorMessage = '';
 

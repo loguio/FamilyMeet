@@ -38,6 +38,7 @@ dependencies:
   intl: ">=0.17.0 <1.0.0"
   sqflite:
   path:
+  crypt: ^4.2.1
 
 
 dev_dependencies:

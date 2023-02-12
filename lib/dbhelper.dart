@@ -1,17 +1,22 @@
 // ignore_for_file: prefer_const_declarations
 
+// import 'dart:html';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+// import 'package:crypt/crypt.dart';
 
 class DatabaseHelper {
-  static final _databaseName = "cardb.db";
+  static final _databaseName = "FamilyMeet2.db";
   static final _databaseVersion = 1;
 
-  static final table = 'cars_table';
+  static final table = 'event';
+  static final tableUser = 'users';
 
   static final columnId = 'id';
   static final columnName = 'name';
-  static final columnMiles = 'miles';
+  static final columnDescription = 'description';
+  static final columnDate = 'date';
 
   // make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -40,23 +45,44 @@ class DatabaseHelper {
           CREATE TABLE $table (
             $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnName TEXT NOT NULL,
-            $columnMiles INTEGER NOT NULL
+            $columnDescription TEXT NOT NULL,
+            $columnDate TEXT NOT NULL
           )
           ''');
   }
 
-  // Helper methods
-
-  // Inserts a row in the database where each key in the Map is a column name
-  // and the value is the column value. The return value is the id of the
-  // inserted row.
-  Future<int> insert() async {
+  Future<int> insert(String name, String description, DateTime date) async {
     Database db = await instance.database;
-    return await db.insert(table, {'name': "2eme test", 'miles': 135200});
+    return await db.insert(table,
+        {'name': name, 'description': description, "date": date.toString()});
   }
 
   Future<List<Map<String, dynamic>>> queryAllRows() async {
     Database db = await instance.database;
     return await db.query(table);
+  }
+
+  Future _CreateTableUser(Database db) async {
+    await db.execute('''
+          CREATE TABLE $tableUser (
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
+            $columnName TEXT NOT NULL,
+            "email" TEXT NOT NULL,
+            "password" TEXT NOT NULL
+          )
+          ''');
+  }
+
+  Future<bool> verifyUser(
+      Database db, String password, String email, String Name) async {
+    // final h = Crypt(hashString);
+    db.query(tableUser, where: "$columnName = $Name OR email = $email");
+    return true;
+  }
+
+  Future<int> insertUser(String name, String password, String email) async {
+    Database db = await instance.database;
+    return await db
+        .insert(table, {'name': name, 'email': email, "password": password});
   }
 }
